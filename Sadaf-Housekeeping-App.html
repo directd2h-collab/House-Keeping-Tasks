@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sadaf Al Khair Hotel — Housekeeping</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#7A1F2B">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --maroon:#7A1F2B;
+    --maroon-dark:#5A1620;
+    --gold:#C9A24B;
+    --cream:#FBF7EF;
+    --ink:#2B2320;
+    --ink-soft:#6b5f57;
+    --line:#e7ddce;
+    --alert:#B3261E;
+    --alert-bg:#FDECEA;
+    --ok:#2E7D32;
+    --ok-bg:#EAF4EA;
+    --shadow: 0 12px 32px rgba(58,30,18,0.18);
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--cream);color:var(--ink);font-family:'Inter',sans-serif;}
+  .app{max-width:1180px;margin:0 auto;padding:0 0 60px;}
+
+  header.hero{background:linear-gradient(135deg,var(--maroon) 0%,var(--maroon-dark) 100%);color:#fff;padding:28px 32px 22px;}
+  header.hero .brand{font-family:'Cormorant Garamond',serif;font-weight:700;font-size:34px;letter-spacing:.5px;}
+  header.hero .meta{display:flex;flex-wrap:wrap;gap:18px;margin-top:8px;font-size:14px;color:#f1e2e2;}
+  header.hero .meta span{display:flex;align-items:center;gap:6px;}
+  header.hero .date-badge{margin-left:auto;background:rgba(255,255,255,0.14);border:1px solid rgba(255,255,255,0.35);
+    padding:6px 14px;border-radius:20px;font-size:13px;white-space:nowrap;}
+  header.hero .meta-row{display:flex;align-items:center;}
+
+  .toolbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;padding:18px 32px 6px;}
+  .toolbar .spacer{flex:1;}
+  button{font-family:'Inter',sans-serif;cursor:pointer;border:none;border-radius:8px;font-weight:600;font-size:14px;padding:10px 16px;transition:transform .08s ease, box-shadow .12s ease;}
+  button:active{transform:translateY(1px);}
+  .btn-primary{background:var(--maroon);color:#fff;}
+  .btn-primary:hover{background:var(--maroon-dark);}
+  .btn-gold{background:var(--gold);color:#3a2c0c;}
+  .btn-gold:hover{filter:brightness(0.96);}
+  .btn-ghost{background:#fff;color:var(--maroon);border:1px solid var(--line);}
+  .btn-ghost:hover{background:#fff8ee;}
+  .btn-danger-outline{background:#fff;color:var(--alert);border:1px solid #f0c9c5;font-size:12px;padding:6px 10px;}
+  .search-inline{display:flex;gap:8px;align-items:center;background:#fff;border:1px solid var(--line);border-radius:8px;padding:4px 4px 4px 12px;}
+  .search-inline input{border:none;outline:none;font-size:14px;padding:6px 4px;width:150px;font-family:'Inter';}
+  .search-inline select{border:none;outline:none;font-size:13px;background:transparent;color:var(--ink-soft);}
+
+  .stat-row{display:flex;gap:14px;padding:6px 32px 14px;flex-wrap:wrap;}
+  .stat{background:#fff;border:1px solid var(--line);border-radius:10px;padding:10px 16px;min-width:120px;}
+  .stat .n{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:700;color:var(--maroon);}
+  .stat .l{font-size:11.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-soft);}
+
+  .table-wrap{margin:0 32px;background:#fff;border:1px solid var(--line);border-radius:12px;overflow:hidden;box-shadow:0 2px 10px rgba(58,30,18,0.05);}
+  table{width:100%;border-collapse:collapse;font-size:13.5px;}
+  thead th{background:#F4EADA;color:var(--maroon-dark);text-align:left;padding:10px 12px;font-size:11.5px;text-transform:uppercase;letter-spacing:.05em;position:sticky;top:0;border-bottom:1px solid var(--line);}
+  tbody td{padding:10px 12px;border-bottom:1px solid #f1e9db;vertical-align:top;}
+  tbody tr:hover{background:#fffaf0;}
+  tbody tr.flag{background:var(--alert-bg);}
+  tbody tr.flag:hover{background:#fbdedb;}
+  .pill{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11.5px;font-weight:600;}
+  .pill-open{background:var(--alert-bg);color:var(--alert);}
+  .pill-resolved{background:var(--ok-bg);color:var(--ok);}
+  .pill-none{background:#f1ede4;color:var(--ink-soft);}
+  .alert-text{color:var(--alert);font-weight:600;font-size:12.5px;}
+  .row-actions{display:flex;gap:6px;}
+  .icon-btn{background:transparent;border:1px solid var(--line);border-radius:6px;padding:4px 8px;font-size:12px;color:var(--ink-soft);}
+  .icon-btn:hover{background:#f4ecdf;}
+  .empty-state{padding:40px;text-align:center;color:var(--ink-soft);}
+
+  /* Modal */
+  .overlay{position:fixed;inset:0;background:rgba(43,35,32,0.45);display:flex;align-items:center;justify-content:center;z-index:50;padding:16px;}
+  .modal{background:#fff;border-radius:14px;box-shadow:var(--shadow);width:100%;max-width:560px;max-height:90vh;overflow-y:auto;}
+  .modal-header{padding:20px 24px 10px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;}
+  .modal-header h2{font-family:'Cormorant Garamond',serif;font-size:24px;margin:0;color:var(--maroon);}
+  .modal-body{padding:18px 24px;}
+  .modal-footer{padding:14px 24px 22px;display:flex;gap:10px;justify-content:flex-end;}
+  .close-x{background:none;border:none;font-size:20px;color:var(--ink-soft);cursor:pointer;padding:4px 8px;}
+  .field{margin-bottom:14px;}
+  .field label{display:block;font-size:12.5px;font-weight:600;color:var(--ink-soft);margin-bottom:5px;text-transform:uppercase;letter-spacing:.04em;}
+  .field input, .field select, .field textarea{width:100%;padding:9px 11px;border:1px solid var(--line);border-radius:8px;font-size:14px;font-family:'Inter';color:var(--ink);background:#fffdf9;}
+  .field input:focus, .field select:focus, .field textarea:focus{outline:2px solid var(--gold);outline-offset:1px;}
+  .field-row{display:flex;gap:12px;}
+  .field-row .field{flex:1;}
+  textarea{resize:vertical;min-height:56px;}
+
+  .conflict-banner{background:var(--alert-bg);border:1px solid #f2c6c1;border-left:4px solid var(--alert);border-radius:8px;padding:12px 14px;margin-bottom:16px;font-size:13.5px;color:#7a231d;}
+  .conflict-banner b{display:block;margin-bottom:3px;}
+
+  .search-results{display:flex;flex-direction:column;gap:10px;max-height:50vh;overflow-y:auto;}
+  .search-item{border:1px solid var(--line);border-radius:10px;padding:12px 14px;cursor:pointer;}
+  .search-item:hover{background:#fffaf0;border-color:var(--gold);}
+  .search-item .room{font-weight:700;color:var(--maroon);}
+  .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 18px;border-radius:8px;font-size:13.5px;z-index:100;box-shadow:0 8px 20px rgba(0,0,0,0.25);}
+
+  .loading{padding:60px;text-align:center;color:var(--ink-soft);}
+
+  @media print{
+    header.hero{background:var(--maroon)!important;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+    .toolbar,.stat-row,.icon-btn,.row-actions,.no-print{display:none!important;}
+    body{background:#fff;}
+    .table-wrap{border:none;box-shadow:none;margin:0;}
+    thead th{background:#F4EADA!important;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+    @page{size:A4 landscape;margin:10mm;}
+  }
+</style>
+</head>
+<body>
+<div class="app" id="app">
+  <div class="loading" id="loading">Loading housekeeping records…</div>
+</div>
+
+<script>
+const ROOM_RANGES = [[101,112],[201,212],[301,313],[401,414],[501,514],[601,614],[701,712],[801,811]];
+const ROOMS = ROOM_RANGES.flatMap(([s,e])=>{const a=[];for(let r=s;r<=e;r++)a.push(String(r));return a;});
+const DEFAULT_STAFF = ["Housekeeper 1","Housekeeper 2","Housekeeper 3","Housekeeper 4","Housekeeper 5","Housekeeper 6","Supervisor 1","Supervisor 2"];
+const REC_KEY='hk-records-v1', STAFF_KEY='hk-staff-v1';
+
+let records = [];
+let staff = [...DEFAULT_STAFF];
+let editingId = null;
+let sortMode = 'newest';
+let searchTerm = '';
+let searchScope = 'all';
+let deferredInstallPrompt = null;
+
+const app = document.getElementById('app');
+
+// Data is stored ONLY on this device using localStorage — nothing is sent
+// to any server, so it stays private to whoever's phone this app is on.
+async function loadData(){
+  try{
+    const r = localStorage.getItem(REC_KEY);
+    records = r ? JSON.parse(r) : [];
+  }catch(e){ records = []; }
+  try{
+    const s = localStorage.getItem(STAFF_KEY);
+    staff = s ? JSON.parse(s) : [...DEFAULT_STAFF];
+  }catch(e){ staff = [...DEFAULT_STAFF]; }
+  render();
+}
+
+async function saveRecords(){
+  try{
+    localStorage.setItem(REC_KEY, JSON.stringify(records));
+  }catch(e){ showToast('Could not save on this device — storage may be full.'); }
+}
+async function saveStaff(){
+  try{ localStorage.setItem(STAFF_KEY, JSON.stringify(staff)); }catch(e){}
+}
+
+function exportBackup(){
+  const blob = new Blob([JSON.stringify({records, staff}, null, 2)], {type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = `sadaf-housekeeping-backup-${new Date().toISOString().slice(0,10)}.json`;
+  a.click(); URL.revokeObjectURL(url);
+}
+
+function importBackup(file){
+  const reader = new FileReader();
+  reader.onload = (e)=>{
+    try{
+      const data = JSON.parse(e.target.result);
+      if(Array.isArray(data.records)) records = data.records;
+      if(Array.isArray(data.staff)) staff = data.staff;
+      saveRecords(); saveStaff(); render();
+      showToast('Backup restored.');
+    }catch(err){ showToast('That file could not be read.'); }
+  };
+  reader.readAsText(file);
+}
+
+function showToast(msg){
+  const t = document.createElement('div');
+  t.className='toast'; t.textContent=msg;
+  document.body.appendChild(t);
+  setTimeout(()=>t.remove(),2600);
+}
+
+function fmtDate(d){
+  if(!d) return '—';
+  const dt = new Date(d+'T00:00:00');
+  if(isNaN(dt)) return d;
+  return dt.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});
+}
+
+function todayLabel(){
+  const d = new Date();
+  return d.toLocaleDateString('en-GB',{weekday:'long',day:'2-digit',month:'short',year:'numeric'});
+}
+
+function openIssueFor(room, excludeId){
+  // most recent OPEN issue for a room, excluding a given record id
+  const matches = records.filter(r=>r.room===room && r.status==='Open' && r.issue && r.issue.trim() && r.id!==excludeId);
+  if(!matches.length) return null;
+  matches.sort((a,b)=>b.ts-a.ts);
+  return matches[0];
+}
+
+function render(){
+  const sorted = [...records].sort((a,b)=> sortMode==='newest' ? b.ts-a.ts : (a.room-b.room || b.ts-a.ts));
+  const filtered = sorted.filter(r=>{
+    if(searchTerm && !String(r.room).includes(searchTerm.trim())) return false;
+    if(searchScope==='checkin' && !r.checkin) return false;
+    if(searchScope==='checkout' && !r.checkout) return false;
+    if(searchScope==='open' && r.status!=='Open') return false;
+    return true;
+  });
+
+  const openCount = records.filter(r=>r.status==='Open' && r.issue && r.issue.trim()).length;
+
+  app.innerHTML = `
+    <header class="hero">
+      <div class="brand">Sadaf Al Khair Hotel Services</div>
+      <div class="meta">
+        <span class="meta-row">📍 Ajyad As Sadd, Makkah, KSA</span>
+        <span class="meta-row">☎ +966539953057</span>
+        <span class="date-badge">${todayLabel()}</span>
+      </div>
+    </header>
+
+    <div class="toolbar">
+      <button class="btn-primary" id="btnNew">+ New Entry</button>
+      <button class="btn-ghost" id="btnFind">🔎 Find Room</button>
+      <button class="btn-ghost" id="btnPrint">🖨 Print (A4)</button>
+      <button class="btn-ghost" id="btnExport">⬇ Backup</button>
+      <button class="btn-ghost" id="btnImport">⬆ Restore</button>
+      <button class="btn-gold no-print" id="btnInstall" style="display:none;">📲 Install App</button>
+      <input type="file" id="importFile" accept="application/json" style="display:none">
+      <div class="spacer"></div>
+      <div class="search-inline">
+        <input id="quickSearch" placeholder="Filter by room no." value="${searchTerm}">
+        <select id="scopeSelect">
+          <option value="all" ${searchScope==='all'?'selected':''}>All</option>
+          <option value="checkin" ${searchScope==='checkin'?'selected':''}>Has Check-in</option>
+          <option value="checkout" ${searchScope==='checkout'?'selected':''}>Has Check-out</option>
+          <option value="open" ${searchScope==='open'?'selected':''}>Open issues only</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="stat-row">
+      <div class="stat"><div class="n">${records.length}</div><div class="l">Total entries</div></div>
+      <div class="stat"><div class="n">${openCount}</div><div class="l">Open issues</div></div>
+      <div class="stat"><div class="n">${ROOMS.length}</div><div class="l">Rooms (8 floors)</div></div>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr>
+          <th>#</th><th>Room</th><th>Check-in</th><th>Check-out</th><th>Issue</th><th>Issue date</th><th>Status</th><th>Assigned</th><th>Remarks</th><th>Past issue alert</th><th class="no-print">Actions</th>
+        </tr></thead>
+        <tbody>
+        ${filtered.length ? filtered.map((r,i)=>{
+          const prior = openIssueFor(r.room, r.id);
+          const flagged = prior && (r.checkin || r.checkout);
+          return `<tr class="${flagged?'flag':''}">
+            <td>${filtered.length-i}</td>
+            <td><b>${r.room}</b></td>
+            <td>${fmtDate(r.checkin)}</td>
+            <td>${fmtDate(r.checkout)}</td>
+            <td>${r.issue ? r.issue : '—'}</td>
+            <td>${r.issueDate ? fmtDate(r.issueDate) : '—'}</td>
+            <td>${r.issue && r.issue.trim() ? `<span class="pill ${r.status==='Open'?'pill-open':'pill-resolved'}">${r.status}</span>` : `<span class="pill pill-none">—</span>`}</td>
+            <td>${r.assigned || '—'}</td>
+            <td>${r.remarks || '—'}</td>
+            <td>${flagged ? `<span class="alert-text">⚠ Room ${r.room}: ${prior.issue}</span>` : ''}</td>
+            <td class="no-print"><div class="row-actions">
+              <button class="icon-btn" data-edit="${r.id}">Edit</button>
+              ${r.issue ? `<button class="icon-btn" data-clearissue="${r.id}">Delete Issue</button>` : ''}
+              <button class="icon-btn" data-del="${r.id}">Delete</button>
+            </div></td>
+          </tr>`;
+        }).join('') : `<tr><td colspan="11"><div class="empty-state">No entries yet. Click “+ New Entry” to log a check-in, check-out, or issue.</div></td></tr>`}
+        </tbody>
+      </table>
+    </div>
+  `;
+
+  document.getElementById('btnNew').onclick = ()=>openEntryModal(null);
+  document.getElementById('btnFind').onclick = openFindModal;
+  document.getElementById('btnPrint').onclick = ()=>window.print();
+  document.getElementById('btnExport').onclick = exportBackup;
+  document.getElementById('btnImport').onclick = ()=>document.getElementById('importFile').click();
+  document.getElementById('importFile').onchange = (e)=>{ if(e.target.files[0]) importBackup(e.target.files[0]); e.target.value=''; };
+  const installBtn = document.getElementById('btnInstall');
+  if(deferredInstallPrompt){ installBtn.style.display='inline-block'; }
+  installBtn.onclick = async ()=>{
+    if(!deferredInstallPrompt) return;
+    deferredInstallPrompt.prompt();
+    await deferredInstallPrompt.userChoice;
+    deferredInstallPrompt = null;
+    installBtn.style.display='none';
+  };
+  document.getElementById('quickSearch').oninput = (e)=>{searchTerm=e.target.value; render();};
+  document.getElementById('scopeSelect').onchange = (e)=>{searchScope=e.target.value; render();};
+  document.querySelectorAll('[data-edit]').forEach(b=>b.onclick=()=>openEntryModal(b.dataset.edit));
+  document.querySelectorAll('[data-del]').forEach(b=>b.onclick=()=>deleteRecord(b.dataset.del));
+  document.querySelectorAll('[data-clearissue]').forEach(b=>b.onclick=()=>clearIssue(b.dataset.clearissue));
+}
+
+function clearIssue(id){
+  const rec = records.find(r=>String(r.id)===String(id));
+  if(!rec) return;
+  if(!confirm(`Delete the issue for Room ${rec.room}? The check-in/check-out record will stay, only the issue is removed.`)) return;
+  rec.issue=''; rec.status=''; rec.issueDate='';
+  saveRecords();
+  render();
+  showToast('Issue deleted.');
+}
+
+function deleteRecord(id){
+  if(!confirm('Delete this entry? This cannot be undone.')) return;
+  records = records.filter(r=>String(r.id)!==String(id));
+  saveRecords();
+  render();
+}
+
+function closeModal(){
+  const ov = document.getElementById('overlay');
+  if(ov) ov.remove();
+}
+
+function openEntryModal(id){
+  editingId = id;
+  const rec = id ? records.find(r=>String(r.id)===String(id)) : null;
+  const roomOptions = ROOMS.map(r=>`<option value="${r}">`).join('');
+  const staffOptions = staff.map(s=>`<option value="${s}">`).join('');
+
+  const ov = document.createElement('div');
+  ov.className='overlay'; ov.id='overlay';
+  ov.innerHTML = `
+    <div class="modal">
+      <div class="modal-header">
+        <h2>${rec ? 'Edit Entry — Room '+rec.room : 'New Housekeeping Entry'}</h2>
+        <button class="close-x" id="closeX">✕</button>
+      </div>
+      <div class="modal-body">
+        <div id="conflictSlot"></div>
+        <div class="field-row">
+          <div class="field">
+            <label>Room Number</label>
+            <input list="roomsList" id="fRoom" placeholder="e.g. 205" value="${rec?rec.room:''}">
+            <datalist id="roomsList">${roomOptions}</datalist>
+          </div>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label>Check-in</label>
+            <input type="date" id="fCheckin" value="${rec?rec.checkin||'':''}">
+          </div>
+          <div class="field">
+            <label>Check-out</label>
+            <input type="date" id="fCheckout" value="${rec?rec.checkout||'':''}">
+          </div>
+        </div>
+        <div class="field">
+          <label>Issue in Room</label>
+          <textarea id="fIssue" placeholder="Leave blank if no issue">${rec?rec.issue||'':''}</textarea>
+          <div id="issueDateNote" style="font-size:12px;color:var(--ink-soft);margin-top:4px;">${rec&&rec.issueDate?`Logged on: ${fmtDate(rec.issueDate)}`:''}</div>
+        </div>
+        <div class="field-row">
+          <div class="field">
+            <label>Issue Status</label>
+            <select id="fStatus">
+              <option value="Open" ${rec&&rec.status==='Open'?'selected':''}>Open</option>
+              <option value="Resolved" ${rec&&rec.status==='Resolved'?'selected':''}>Resolved</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Assigned Person</label>
+            <input list="staffList" id="fAssigned" placeholder="Type or pick a name" value="${rec?rec.assigned||'':''}">
+            <datalist id="staffList">${staffOptions}</datalist>
+          </div>
+        </div>
+        <div class="field">
+          <label>Remarks</label>
+          <textarea id="fRemarks" placeholder="Optional notes">${rec?rec.remarks||'':''}</textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        ${rec?`<button class="btn-danger-outline" id="deleteBtn">Delete</button>`:''}
+        <button class="btn-ghost" id="cancelBtn">Cancel</button>
+        <button class="btn-primary" id="saveBtn">Save Entry</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(ov);
+  document.getElementById('closeX').onclick=closeModal;
+  document.getElementById('cancelBtn').onclick=closeModal;
+  if(rec) document.getElementById('deleteBtn').onclick=()=>{closeModal(); deleteRecord(rec.id);};
+
+  const roomInput = document.getElementById('fRoom');
+  function checkConflict(){
+    const room = roomInput.value.trim();
+    const slot = document.getElementById('conflictSlot');
+    if(!room){ slot.innerHTML=''; return; }
+    const prior = openIssueFor(room, rec?rec.id:null);
+    if(prior){
+      slot.innerHTML = `<div class="conflict-banner"><b>⚠ Past issue found for Room ${room}</b>
+        "${prior.issue}" — logged ${fmtDate(prior.issueDate)}, assigned to ${prior.assigned||'unassigned'}. Still marked Open.</div>`;
+    } else {
+      slot.innerHTML='';
+    }
+  }
+  roomInput.oninput = checkConflict;
+  checkConflict();
+
+  document.getElementById('saveBtn').onclick = ()=>{
+    const room = roomInput.value.trim();
+    if(!room){ alert('Please enter a room number.'); return; }
+    const checkin = document.getElementById('fCheckin').value;
+    const checkout = document.getElementById('fCheckout').value;
+    const issue = document.getElementById('fIssue').value.trim();
+    const status = document.getElementById('fStatus').value;
+    const assigned = document.getElementById('fAssigned').value.trim();
+    const remarks = document.getElementById('fRemarks').value.trim();
+
+    const prior = openIssueFor(room, rec?rec.id:null);
+    const isCheckAction = checkin || checkout;
+
+    const finish = ()=>{
+      const today = new Date().toISOString().slice(0,10);
+      let issueDate = rec ? (rec.issueDate || '') : '';
+      if(issue && !issueDate){ issueDate = today; }   // stamp the date the issue is first logged
+      if(!issue){ issueDate = ''; }                    // no issue text = no issue date
+      if(rec){
+        Object.assign(rec, {room, checkin, checkout, issue, status, assigned, remarks, issueDate});
+      } else {
+        records.push({id:Date.now(), room, checkin, checkout, issue, status, assigned, remarks, issueDate, ts:Date.now()});
+      }
+      if(assigned && !staff.includes(assigned)){ staff.push(assigned); saveStaff(); }
+      saveRecords();
+      closeModal();
+      render();
+      showToast('Entry saved.');
+    };
+
+    if(prior && isCheckAction){
+      if(confirm(`⚠ Room ${room} has a past OPEN issue:\n\n"${prior.issue}"\n\nAssigned to: ${prior.assigned||'unassigned'}\n\nClick OK to save this entry anyway, or Cancel to go back and resolve it first.`)){
+        finish();
+      }
+    } else {
+      finish();
+    }
+  };
+}
+
+function openFindModal(){
+  const ov = document.createElement('div');
+  ov.className='overlay'; ov.id='overlay';
+  ov.innerHTML = `
+    <div class="modal">
+      <div class="modal-header"><h2>Find by Room Number</h2><button class="close-x" id="closeX">✕</button></div>
+      <div class="modal-body">
+        <div class="field-row">
+          <div class="field">
+            <label>Room Number</label>
+            <input list="roomsListFind" id="findRoom" placeholder="e.g. 310">
+            <datalist id="roomsListFind">${ROOMS.map(r=>`<option value="${r}">`).join('')}</datalist>
+          </div>
+          <div class="field">
+            <label>Look in</label>
+            <select id="findScope">
+              <option value="all">All entries</option>
+              <option value="checkin">Check-in entries</option>
+              <option value="checkout">Check-out entries</option>
+            </select>
+          </div>
+        </div>
+        <div class="search-results" id="findResults"></div>
+      </div>
+      <div class="modal-footer"><button class="btn-ghost" id="cancelBtn">Close</button></div>
+    </div>
+  `;
+  document.body.appendChild(ov);
+  document.getElementById('closeX').onclick=closeModal;
+  document.getElementById('cancelBtn').onclick=closeModal;
+
+  function runSearch(){
+    const room = document.getElementById('findRoom').value.trim();
+    const scope = document.getElementById('findScope').value;
+    let matches = records.filter(r=>String(r.room)===room);
+    if(scope==='checkin') matches = matches.filter(r=>r.checkin);
+    if(scope==='checkout') matches = matches.filter(r=>r.checkout);
+    matches.sort((a,b)=>b.ts-a.ts);
+    const box = document.getElementById('findResults');
+    if(!room){ box.innerHTML=''; return; }
+    if(!matches.length){ box.innerHTML = `<div class="empty-state">No entries found for Room ${room}.</div>`; return; }
+    box.innerHTML = matches.map(r=>`
+      <div class="search-item" data-open="${r.id}">
+        <div class="room">Room ${r.room} — ${r.status==='Open'&&r.issue?'<span class="pill pill-open">Open</span>':(r.issue?'<span class="pill pill-resolved">Resolved</span>':'')}</div>
+        <div>Check-in: ${fmtDate(r.checkin)} &nbsp;|&nbsp; Check-out: ${fmtDate(r.checkout)}</div>
+        ${r.issue?`<div>Issue: ${r.issue} ${r.issueDate?`(logged ${fmtDate(r.issueDate)})`:''}</div>`:''}
+        ${r.assigned?`<div>Assigned: ${r.assigned}</div>`:''}
+      </div>`).join('');
+    box.querySelectorAll('[data-open]').forEach(el=>el.onclick=()=>{closeModal(); openEntryModal(el.dataset.open);});
+  }
+  document.getElementById('findRoom').oninput = runSearch;
+  document.getElementById('findScope').onchange = runSearch;
+}
+
+loadData();
+
+window.addEventListener('beforeinstallprompt', (e)=>{
+  e.preventDefault();
+  deferredInstallPrompt = e;
+  const btn = document.getElementById('btnInstall');
+  if(btn) btn.style.display='inline-block';
+});
+
+if('serviceWorker' in navigator){
+  window.addEventListener('load', ()=>{
+    navigator.serviceWorker.register('sw.js').catch(()=>{});
+  });
+}
+</script>
+</body>
+</html>
